@@ -1,0 +1,6 @@
+.idea
+.idea/*
+cmake-build-*
+cmake-build-*/*
+models/*
+!models/box.glb

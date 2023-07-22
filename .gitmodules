@@ -1,0 +1,15 @@
+[submodule "deps/bvh"]
+	path = deps/bvh
+	url = https://github.com/madmann91/bvh
+[submodule "deps/cgltf"]
+	path = deps/cgltf
+	url = https://github.com/jkuhlmann/cgltf
+[submodule "deps/glfw"]
+	path = deps/glfw
+	url = https://github.com/glfw/glfw
+[submodule "deps/glad"]
+	path = deps/glad
+	url = https://github.com/Dav1dde/glad
+[submodule "deps/glm"]
+	path = deps/glm
+	url = https://github.com/g-truc/glm

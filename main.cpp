@@ -37,10 +37,18 @@ using bvh_perm_prim = bvh::v2::PrecomputedTri<float>;
 
 namespace fs = std::filesystem;
 
+/*
 struct camera_t {
     glm::vec3 position = { 9.67f, 0.885f, 1.735f };
     float yaw = 201.325f;
     float pitch = 18.75f;
+};
+*/
+
+struct camera_t {
+    glm::vec3 position = { 0.0f, 1.0f, 2.0f };
+    float yaw = 270.0f;
+    float pitch = 0.0f;
 };
 
 struct vertex_t {
@@ -182,7 +190,7 @@ static auto trace(
                         if (hit != -1) {
                             const auto mesh_id = std::distance(
                                 data.offsets.begin(),
-                                std::ranges::lower_bound(data.offsets, bvh.prim_ids[hit], [](const auto& x, const auto& y) {
+                                std::lower_bound(data.offsets.begin(), data.offsets.end(), bvh.prim_ids[hit], [](const auto& x, const auto& y) {
                                     return x <= y;
                                 }));
                             const auto& n0 = data.attributes[bvh.prim_ids[hit] * 3 + 0].normal;
@@ -196,12 +204,14 @@ static auto trace(
                                 glm::vec3(ray.org[0], ray.org[1], ray.org[2]) +
                                 glm::vec3(ray.dir[0], ray.dir[1], ray.dir[2]) *
                                 ray.tmax;
-                            auto direction = random_direction_in_hemisphere(state, normal);
+                            auto direction = glm::normalize(normal + random_direction(state));
                             ray = bvh_ray(as_vec3(point), as_vec3(direction), 0.001f);
 
                             const auto& material = data.materials[mesh_id];
                             incoming_light += material.emission_color * material.emission_strength * ray_color;
-                            ray_color *= material.base_color;
+                            //if (bounce >= 1) {
+                                ray_color *= material.base_color;
+                            //}
                         } else {
                             //incoming_light += environmental_light(ray);
                             break;
@@ -331,19 +341,22 @@ int main() {
                         case cgltf_component_type_r_8:
                         case cgltf_component_type_r_8u: {
                             const auto* ptr = reinterpret_cast<const uint8_t*>(data_ptr + buffer_view.offset + accessor.offset);
-                            std::ranges::copy(std::span(ptr, accessor.count), std::back_inserter(indices));
+                            const auto ptr_span = std::span(ptr, accessor.count);
+                            std::copy(ptr_span.begin(), ptr_span.end(), std::back_inserter(indices));
                         } break;
 
                         case cgltf_component_type_r_16:
                         case cgltf_component_type_r_16u: {
                             const auto* ptr = reinterpret_cast<const uint16_t*>(data_ptr + buffer_view.offset + accessor.offset);
-                            std::ranges::copy(std::span(ptr, accessor.count), std::back_inserter(indices));
+                            const auto ptr_span = std::span(ptr, accessor.count);
+                            std::copy(ptr_span.begin(), ptr_span.end(), std::back_inserter(indices));
                         } break;
 
                         case cgltf_component_type_r_32f:
                         case cgltf_component_type_r_32u: {
                             const auto* ptr = reinterpret_cast<const uint32_t*>(data_ptr + buffer_view.offset + accessor.offset);
-                            std::ranges::copy(std::span(ptr, accessor.count), std::back_inserter(indices));
+                            const auto ptr_span = std::span(ptr, accessor.count);
+                            std::copy(ptr_span.begin(), ptr_span.end(), std::back_inserter(indices));
                         } break;
 
                         default: break;

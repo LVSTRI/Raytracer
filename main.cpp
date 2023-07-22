@@ -145,7 +145,7 @@ static auto trace(
         glm::sin(r_yaw) * glm::cos(r_pitch));
     const auto view = glm::lookAt(camera.position, camera.position + forward, glm::vec3(0.0f, 1.0f, 0.0f));
     const auto inv_pv = glm::inverse(projection * view);
-    const auto spp = 32u;
+    const auto spp = 1u;
 
     executor.for_each(0, height, [&](size_t start, size_t end) {
         for (auto y = start; y < end; ++y) {
@@ -278,7 +278,7 @@ int main() {
     {
         auto options = cgltf_options();
         auto* gltf = static_cast<cgltf_data*>(nullptr);
-        const auto* path = "../models/sponza_emissive.glb";
+        const auto* path = "../models/box.glb";
         cgltf_parse_file(&options, path, &gltf);
         cgltf_load_buffers(&options, gltf, path);
 
